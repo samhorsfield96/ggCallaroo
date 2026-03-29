@@ -31,7 +31,6 @@ bakta_proteins ── functional annotation of representative proteins
 
 ## Installation
 
-
 Install the required packages using [conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html)/[mamba](https://github.com/mamba-org/mamba):
 
 ```
@@ -43,7 +42,7 @@ mamba activate ggcaller-aroo
 
 ## Usage
 
-### 0. Download bakta database
+### 1. Download bakta database
 
 Install Bakta and download the latest bakta database:
 
@@ -51,7 +50,7 @@ Install Bakta and download the latest bakta database:
 
 Add the bakta_db filepath to the config.yaml file.
 
-### 1. Prepare a samples file
+### 2. Prepare a samples file
 
 Create a plain-text file (e.g. `input.txt`) with one genome assembly FASTA
 path per line:
@@ -66,13 +65,13 @@ You can do this using the command:
 
 `ls -d -1 $PWD/*.fasta > input.txt`
 
-### 2. Edit `config/config.yaml`
+### 3. Edit `config/config.yaml`
 
 Set `samples` to your samples file, `output_dir` to the desired results
 directory, and supply any extra tool arguments via the `cli_args` fields.
 Set `bakta.db` to your local Bakta database path.
 
-### 3. Run the pipeline
+### 4. Run the pipeline
 
 ```bash
 snakemake --cores <N> --use-conda
