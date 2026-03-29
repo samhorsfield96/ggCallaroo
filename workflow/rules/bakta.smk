@@ -28,5 +28,5 @@ rule bakta_proteins:
     conda:
         "envs/bakta.yaml"
     shell:
-        "bakta_proteins --db {params.db} --output {params.out_dir} --threads {threads} "
-        "--prefix {params.prefix} {params.cli_args} {input.proteins} > {log} 2>&1"
+        "bakta_proteins --force --db {params.db} --output {params.out_dir} --threads {threads} "
+        "--prefix {params.prefix} {input.proteins} > {log} 2>&1"

@@ -13,4 +13,4 @@ rule panaroo:
     log:
         config["output_dir"] + "/logs/panaroo.log",
     shell:
-        "panaroo -i {input.gff_dir}/*.gff --threads {threads} -o {params.out_dir} {params.cli_args} > {log} 2>&1"
+        "panaroo -i {input.gff_dir}/GFF/* --threads {threads} -o {params.out_dir} {params.cli_args} > {log} 2>&1"

@@ -19,4 +19,4 @@ rule ggcaller:
         config["output_dir"] + "/logs/ggcaller.log",
     shell:
         "ggcaller {params.input_flag} {input.samples} {params.cli_args} "
-        "--out {output} --threads {threads} > {log} 2>&1"
+        "--out {output} --threads {threads} --gene-finding-only > {log} 2>&1"

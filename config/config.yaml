@@ -1,12 +1,10 @@
 # Path to a text file listing input genome assembly FASTA paths (one per line).
 # ggCaller accepts assembled genomes via --refs (flag name is ggCaller convention).
-refs: "samples.txt"
+refs: "/path/to/assembly_list.txt"
 reads: null  # ggCaller accepts raw reads via --reads (flag name is ggCaller convention). Set to null if not using.
 
 # Base output directory for all pipeline results
-output_dir: "results"
-
-threads: 1
+output_dir: "results_test"
 
 # ggCaller gene prediction settings
 ggcaller:
@@ -24,6 +22,3 @@ panaroo:
 bakta:
   # REQUIRED: set this to your local Bakta database directory.
   db: "/path/to/bakta/db"
-  # CLI arguments passed directly to bakta_proteins.
-  # Example: ""
-  cli_args: ""
