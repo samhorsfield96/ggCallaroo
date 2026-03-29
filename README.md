@@ -1,7 +1,7 @@
 # ggCalleraroo
 
 A Snakemake pipeline combining graph-based gene prediction with
-[ggCaller](https://github.com/samhorsfield96/ggCaller), pangenome gene clustering
+[ggCaller](https://github.com/bacpop/ggCaller), pangenome gene clustering
 with [Panaroo](https://github.com/gtonkinhill/panaroo), and functional annotation
 of representative proteins with [Bakta](https://github.com/oschwengers/bakta).
 
@@ -32,7 +32,7 @@ bakta_proteins ── functional annotation of representative proteins
 ## Requirements
 
 - [Snakemake](https://snakemake.readthedocs.io/) ≥ 7.0
-- [ggCaller](https://github.com/samhorsfield96/ggCaller)
+- [ggCaller](https://github.com/bacpop/ggCaller)
 - [Panaroo](https://github.com/gtonkinhill/panaroo)
 - [Bakta](https://github.com/oschwengers/bakta) (provides `bakta_proteins`)
 - [Biopython](https://biopython.org/)
