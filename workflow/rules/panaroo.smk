@@ -7,9 +7,10 @@ rule panaroo:
     params:
         cli_args=config["panaroo"]["cli_args"],
         out_dir=config["output_dir"] + "/panaroo",
+    threads: 40
     conda:
         "envs/panaroo.yaml"
     log:
         config["output_dir"] + "/logs/panaroo.log",
     shell:
-        "panaroo -i {input.gff_dir}/*.gff -o {params.out_dir} {params.cli_args} > {log} 2>&1"
+        "panaroo -i {input.gff_dir}/*.gff --threads {threads} -o {params.out_dir} {params.cli_args} > {log} 2>&1"
