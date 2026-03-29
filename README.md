@@ -29,13 +29,17 @@ bakta_proteins ── functional annotation of representative proteins
 3. **Translation** – converts representative nucleotide sequences to amino acids.
 4. **Bakta** – annotates representative proteins with `bakta_proteins`.
 
-## Requirements
+## Installation
 
-- [Snakemake](https://snakemake.readthedocs.io/) ≥ 7.0
-- [ggCaller](https://github.com/bacpop/ggCaller)
-- [Panaroo](https://github.com/gtonkinhill/panaroo)
-- [Bakta](https://github.com/oschwengers/bakta) (provides `bakta_proteins`)
-- [Biopython](https://biopython.org/)
+
+Install the required packages using [conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html)/[mamba](https://github.com/mamba-org/mamba):
+
+```
+git clone https://github.com/samhorsfield96/ggCaller-aroo.git
+cd ggCaller-aroo
+mamba env create -n ggcaller-aroo "snakemake>=9.19.0" "bakta>=1.12.0"
+mamba activate ggcaller-aroo
+```
 
 ## Usage
 
