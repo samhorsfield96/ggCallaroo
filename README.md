@@ -1,4 +1,4 @@
-# ggCaller-aroo
+# ggCallaroo
 
 A Snakemake pipeline combining graph-based gene prediction with
 [ggCaller](https://github.com/bacpop/ggCaller), pangenome gene clustering
@@ -34,10 +34,10 @@ bakta_proteins ── functional annotation of representative proteins
 Install the required packages using [conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html)/[mamba](https://github.com/mamba-org/mamba):
 
 ```
-git clone https://github.com/samhorsfield96/ggCaller-aroo.git
-cd ggCaller-aroo
-mamba env create -n ggcaller-aroo "snakemake>=9.19.0" "bakta>=1.12.0"
-mamba activate ggcaller-aroo
+git clone https://github.com/samhorsfield96/ggCallaroo.git
+cd ggCallaroo
+mamba env create -n ggcallaroo "snakemake>=9.19.0" "bakta>=1.12.0"
+mamba activate ggcallaroo
 ```
 
 ## Usage
