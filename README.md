@@ -91,7 +91,6 @@ All tool-specific parameters are controlled via `config/config.yaml`.
 | `ggcaller.cli_args` | CLI arguments passed verbatim to `ggcaller` |
 | `panaroo.cli_args` | CLI arguments passed verbatim to `panaroo` |
 | `bakta.db` | Path to Bakta database directory |
-| `bakta.cli_args` | CLI arguments passed verbatim to `bakta_proteins` |
 
 ### Example ggCaller arguments
 
