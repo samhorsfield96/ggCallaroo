@@ -21,9 +21,6 @@ RUN mamba env update -n base -f /tmp/environment_docker.yml && \
     python -m pip install --no-deps --ignore-installed . && \
     mkdir -p bakta_db
 
-# download bakta DB during build
-RUN bakta_db download --output bakta_db --type light
-
 # Pre-create Snakemake conda environments so they don't need to be built at runtime.
 # Uses a dummy config - no rules are executed, only environments are resolved and installed.
 COPY --chown=root:root docker/config_docker.yaml /tmp/config_docker.yaml
@@ -32,6 +29,9 @@ RUN touch dummy.txt && \
     --cores 1 --configfile /tmp/config_docker.yaml && \
     rm dummy.txt && \
     mamba clean --all --yes
+
+# download bakta DB during build
+RUN bakta_db download --output bakta_db --type light
 
 ENV PATH=$PATH:/opt/conda/bin
 
