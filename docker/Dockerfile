@@ -28,6 +28,12 @@ RUN touch dummy.txt && mkdir -p /dummy/db && \
     rm dummy.txt && rm -rf /dummy/db && \
     mamba clean --all --yes
 
+# download baktadb
+RUN mamba activate base && \
+    mkdir -p bakta_db && \
+    bakta_db download --output bakta_db --type light && \
+    mamba deactivate
+
 ENV PATH=$PATH:/opt/conda/bin
 
 ENTRYPOINT [ "/usr/local/bin/entrypoint.sh" ]
