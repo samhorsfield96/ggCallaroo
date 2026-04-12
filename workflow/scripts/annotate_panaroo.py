@@ -14,7 +14,6 @@ import csv
 import logging
 import re
 from pathlib import Path
-import argparse
 
 from Bio import SeqIO
 
@@ -215,116 +214,91 @@ def update_gml(in_path, out_path, logging=logging):
 
     logging.info("final_graph.gml: updated %d nodes.", updated_nodes)
 
-def get_options():
-    description = "Annotates tokenised gene clusters"
-    parser = argparse.ArgumentParser(description=description,
-                                        prog='python annotate_tokens.py')
-    IO = parser.add_argument_group('Input/options.out')
-    IO.add_argument('--bakta_tsv',
-                    required=True,
-                    help='Path to bakta TSV file.')
-    IO.add_argument('--panaroo_dir',
-            required=True,
-            help='Path to panaroo output directory.')
-    IO.add_argument('--output',
-                required=True,
-                help='Output path.')
-    IO.add_argument('--output_type',
-                required=True,
-                choices=['gpa', 'gpa_roary', 'gene_data', 'pan_ref', 'dna_cds', 'prot_cds', 'gml'],
-                help='Output type.')
-    IO.add_argument('--logfile',
-                required=True,
-                help='Path to log file.')
-    return parser.parse_args()
+bakta_tsv   = Path(snakemake.input.bakta_tsv)
+panaroo_dir = Path(snakemake.params.panaroo_dir)
+output       = Path(snakemake.output[0])
+logfile      = Path(snakemake.log[0])
 
-def main():
-    options = get_options()
-    bakta_tsv   = Path(options.bakta_tsv)
-    panaroo_dir = Path(options.panaroo_dir)
-    output       = Path(options.output)
-    logfile      = Path(options.logfile)
+logging.basicConfig(
+    filename=str(logfile),
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s: %(message)s",
+)
 
-    logging.basicConfig(
-        filename=str(logfile),
-        level=logging.INFO,
-        format="%(asctime)s %(levelname)s: %(message)s",
+out_gpa       = output if snakemake.params.output_type == 'gpa' else None
+out_gpa_roary = output if snakemake.params.output_type == 'gpa_roary' else None
+out_gene_data = output if snakemake.params.output_type == 'gene_data' else None
+out_pan_ref   = output if snakemake.params.output_type == 'pan_ref' else None
+out_dna_cds   = output if snakemake.params.output_type == 'dna_cds' else None
+out_prot_cds  = output if snakemake.params.output_type == 'prot_cds' else None
+out_gml       = output if snakemake.params.output_type == 'gml' else None
+
+output.parent.mkdir(parents=True, exist_ok=True)
+
+# ── 1. Load bakta annotations ─────────────────────────────────────────────────
+annotations = load_bakta_annotations(bakta_tsv)
+logging.info("Loaded bakta annotations for %d groups.", len(annotations))
+
+# ── 2. Parse GML: seqID → group_name ─────────────────────────────────────────
+seqid_to_group = parse_gml_seqid_to_group(panaroo_dir / "final_graph.gml")
+logging.info("Parsed %d seqID→group mappings from GML.", len(seqid_to_group))
+
+# ── 3. pan_genome_reference.fa ───────────────────────────────────────────────
+
+if out_pan_ref:
+    written = 0
+    with open(out_pan_ref, "w") as fh:
+        for record in SeqIO.parse(panaroo_dir / "pan_genome_reference.fa", "fasta"):
+            ann  = annotations.get(record.id, {})
+            desc = fasta_annotation(ann)
+            write_fasta(fh, record.id, desc, record.seq)
+            written += 1
+    logging.info("pan_genome_reference.fa: updated %d records.", written)
+
+
+# ── 4. combined_DNA_CDS.fasta & combined_protein_CDS.fasta ──────────────────
+
+if out_dna_cds:
+    update_cds_fasta(panaroo_dir / "combined_DNA_CDS.fasta", out_dna_cds, logging=logging)
+if out_prot_cds:
+    update_cds_fasta(panaroo_dir / "combined_protein_CDS.fasta", out_prot_cds, logging=logging)
+
+# ── 5. gene_data.csv ─────────────────────────────────────────────────────────
+
+if out_gene_data:
+    updated = 0
+    with (
+        open(panaroo_dir / "gene_data.csv", newline="") as in_fh,
+        open(out_gene_data, "w", newline="") as out_fh,
+    ):
+        reader = csv.DictReader(in_fh)
+        writer = csv.DictWriter(out_fh, fieldnames=reader.fieldnames)
+        writer.writeheader()
+        for row in reader:
+            group = seqid_to_group.get(row["clustering_id"], "")
+            ann   = annotations.get(group, {}) if group else {}
+            if ann:
+                row["gene_name"]   = ann.get("gene",    row.get("gene_name",   ""))
+                row["description"] = ann.get("product", row.get("description", ""))
+                updated += 1
+            writer.writerow(row)
+    logging.info("gene_data.csv: updated %d rows.", updated)
+
+
+# ── 6. gene_presence_absence.csv & gene_presence_absence_roary.csv ───────────
+
+if out_gpa:
+    update_gpa(
+        panaroo_dir / "gene_presence_absence.csv", out_gpa, logging=logging
+    )
+if out_gpa_roary:
+    update_gpa(
+        panaroo_dir / "gene_presence_absence_roary.csv",  out_gpa_roary, logging=logging
     )
 
-    out_gpa       = output if options.output_type == 'gpa' else None
-    out_gpa_roary = output if options.output_type == 'gpa_roary' else None
-    out_gene_data = output if options.output_type == 'gene_data' else None
-    out_pan_ref   = output if options.output_type == 'pan_ref' else None
-    out_dna_cds   = output if options.output_type == 'dna_cds' else None
-    out_prot_cds  = output if options.output_type == 'prot_cds' else None
-    out_gml       = output if options.output_type == 'gml' else None
+# ── 7. final_graph.gml ───────────────────────────────────────────────────────
 
-    output.parent.mkdir(parents=True, exist_ok=True)
+if out_gml:
+    update_gml(panaroo_dir / "final_graph.gml", out_gml, logging=logging)
 
-    # ── 1. Load bakta annotations ─────────────────────────────────────────────────
-    annotations = load_bakta_annotations(bakta_tsv)
-    logging.info("Loaded bakta annotations for %d groups.", len(annotations))
-
-    # ── 2. Parse GML: seqID → group_name ─────────────────────────────────────────
-    seqid_to_group = parse_gml_seqid_to_group(panaroo_dir / "final_graph.gml")
-    logging.info("Parsed %d seqID→group mappings from GML.", len(seqid_to_group))
-
-    # ── 3. pan_genome_reference.fa ───────────────────────────────────────────────
-
-    if out_pan_ref:
-        written = 0
-        with open(out_pan_ref, "w") as fh:
-            for record in SeqIO.parse(panaroo_dir / "pan_genome_reference.fa", "fasta"):
-                ann  = annotations.get(record.id, {})
-                desc = fasta_annotation(ann)
-                write_fasta(fh, record.id, desc, record.seq)
-                written += 1
-        logging.info("pan_genome_reference.fa: updated %d records.", written)
-
-
-    # ── 4. combined_DNA_CDS.fasta & combined_protein_CDS.fasta ──────────────────
-
-    if out_dna_cds:
-        update_cds_fasta(panaroo_dir / "combined_DNA_CDS.fasta", out_dna_cds, logging=logging)
-    if out_prot_cds:
-        update_cds_fasta(panaroo_dir / "combined_protein_CDS.fasta", out_prot_cds, logging=logging)
-
-    # ── 5. gene_data.csv ─────────────────────────────────────────────────────────
-
-    if out_gene_data:
-        updated = 0
-        with (
-            open(panaroo_dir / "gene_data.csv", newline="") as in_fh,
-            open(out_gene_data, "w", newline="") as out_fh,
-        ):
-            reader = csv.DictReader(in_fh)
-            writer = csv.DictWriter(out_fh, fieldnames=reader.fieldnames)
-            writer.writeheader()
-            for row in reader:
-                group = seqid_to_group.get(row["clustering_id"], "")
-                ann   = annotations.get(group, {}) if group else {}
-                if ann:
-                    row["gene_name"]   = ann.get("gene",    row.get("gene_name",   ""))
-                    row["description"] = ann.get("product", row.get("description", ""))
-                    updated += 1
-                writer.writerow(row)
-        logging.info("gene_data.csv: updated %d rows.", updated)
-
-
-    # ── 6. gene_presence_absence.csv & gene_presence_absence_roary.csv ───────────
-
-    if out_gpa:
-        update_gpa(
-            panaroo_dir / "gene_presence_absence.csv", out_gpa, logging=logging
-        )
-    if out_gpa_roary:
-        update_gpa(
-            panaroo_dir / "gene_presence_absence_roary.csv",  out_gpa_roary, logging=logging
-        )
-
-    # ── 7. final_graph.gml ───────────────────────────────────────────────────────
-
-    if out_gml:
-        update_gml(panaroo_dir / "final_graph.gml", out_gml, logging=logging)
-
-    logging.info("Annotation update complete.")
+logging.info("Annotation update complete.")

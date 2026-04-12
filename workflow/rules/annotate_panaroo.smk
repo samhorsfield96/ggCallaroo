@@ -13,8 +13,8 @@ rule annotate_pan_ref:
     threads: 1
     conda:
         "envs/bakta.yaml"
-    shell:
-        "python ../scripts/annotate_panaroo.py --bakta_tsv {input.bakta_tsv} --output {output} --logfile {log} --output_type {params.output_type} --panaroo_dir {params.panaroo_dir}"
+    script:
+        "../scripts/annotate_panaroo.py"
 
 rule annotate_dna_CDS:
     """Propagate bakta_proteins annotations to panaroo CDS output files."""
@@ -31,8 +31,8 @@ rule annotate_dna_CDS:
     threads: 1
     conda:
         "envs/bakta.yaml"
-    shell:
-        "python ../scripts/annotate_panaroo.py --bakta_tsv {input.bakta_tsv} --output {output} --logfile {log} --output_type {params.output_type} --panaroo_dir {params.panaroo_dir}"
+    script:
+        "../scripts/annotate_panaroo.py"
 
 rule annotate_dna_prot:
     """Propagate bakta_proteins annotations to panaroo protein output files."""
@@ -49,8 +49,8 @@ rule annotate_dna_prot:
     threads: 1
     conda:
         "envs/bakta.yaml"
-    shell:
-        "python ../scripts/annotate_panaroo.py --bakta_tsv {input.bakta_tsv} --output {output} --logfile {log} --output_type {params.output_type} --panaroo_dir {params.panaroo_dir}"
+    script:
+        "../scripts/annotate_panaroo.py"
 
 rule annotate_gene_data:
     """Propagate bakta_proteins annotations to panaroo gene_data output files."""
@@ -67,8 +67,8 @@ rule annotate_gene_data:
     threads: 1
     conda:
         "envs/bakta.yaml"
-    shell:
-        "python ../scripts/annotate_panaroo.py --bakta_tsv {input.bakta_tsv} --output {output} --logfile {log} --output_type {params.output_type} --panaroo_dir {params.panaroo_dir}"
+    script:
+        "../scripts/annotate_panaroo.py"
 
 rule annotate_gpa:
     """Propagate bakta_proteins annotations to panaroo gene presence/absence output files."""
@@ -85,8 +85,8 @@ rule annotate_gpa:
     threads: 1
     conda:
         "envs/bakta.yaml"
-    shell:
-        "python ../scripts/annotate_panaroo.py --bakta_tsv {input.bakta_tsv} --output {output} --logfile {log} --output_type {params.output_type} --panaroo_dir {params.panaroo_dir}"
+    script:
+        "../scripts/annotate_panaroo.py"
 
 rule annotate_gpa_roary:
     """Propagate bakta_proteins annotations to panaroo roary gene presence/absence output files."""
@@ -103,8 +103,8 @@ rule annotate_gpa_roary:
     threads: 1
     conda:
         "envs/bakta.yaml"
-    shell:
-        "python ../scripts/annotate_panaroo.py --bakta_tsv {input.bakta_tsv} --output {output} --logfile {log} --output_type {params.output_type} --panaroo_dir {params.panaroo_dir}"
+    script:
+        "../scripts/annotate_panaroo.py"
 
 rule annotate_gml:
     """Propagate bakta_proteins annotations to panaroo final gml output files."""
@@ -121,5 +121,5 @@ rule annotate_gml:
     threads: 1
     conda:
         "envs/bakta.yaml"
-    shell:
-        "python ../scripts/annotate_panaroo.py --bakta_tsv {input.bakta_tsv} --output {output} --logfile {log} --output_type {params.output_type} --panaroo_dir {params.panaroo_dir}"
+    script:
+        "../scripts/annotate_panaroo.py"
