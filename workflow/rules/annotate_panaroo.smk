@@ -1,3 +1,21 @@
+rule annotate_dna_CDS:
+    """Propagate bakta_proteins annotations to panaroo CDS output files."""
+    input:
+        bakta_tsv=config["output_dir"] + "/bakta_proteins/proteins.tsv",
+        pan_ref=config["output_dir"] + "/panaroo/pan_genome_reference.fa",
+    output:
+        config["output_dir"] + "/annotated/combined_DNA_CDS.fasta"
+    params:
+        panaroo_dir=config["output_dir"] + "/panaroo",
+        output_type="dna_cds",
+    log:
+        config["output_dir"] + "/logs/annotate_panaroo_dna_CDS.log",
+    threads: 1
+    conda:
+        "envs/bakta.yaml"
+    shell:
+        "python ../scripts/annotate_panaroo.py --bakta_tsv {input.bakta_tsv} --output {output} --logfile {log} --output_type {params.output_type} --panaroo_dir {params.panaroo_dir}"
+
 rule annotate_panaroo:
     """Propagate bakta_proteins annotations onto all key panaroo output files."""
     input:

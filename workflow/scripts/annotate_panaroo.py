@@ -226,9 +226,9 @@ def get_options():
     IO.add_argument('--panaroo_dir',
             required=True,
             help='Path to panaroo output directory.')
-    IO.add_argument('--outdir',
+    IO.add_argument('--output',
                 required=True,
-                help='Output directory.')
+                help='Output path.')
     IO.add_argument('--output_type',
                 required=True,
                 choices=['gpa', 'gpa_roary', 'gene_data', 'pan_ref', 'dna_cds', 'prot_cds', 'gml'],
@@ -242,7 +242,7 @@ def main():
     options = get_options()
     bakta_tsv   = Path(options.bakta_tsv)
     panaroo_dir = Path(options.panaroo_dir)
-    outdir       = Path(options.outdir)
+    output       = Path(options.output)
     logfile      = Path(options.logfile)
 
     logging.basicConfig(
@@ -251,15 +251,15 @@ def main():
         format="%(asctime)s %(levelname)s: %(message)s",
     )
 
-    out_gpa       = outdir / "gene_presence_absence.csv" if options.output_type == 'gpa' else None
-    out_gpa_roary = outdir / "gene_presence_absence_roary.csv" if options.output_type == 'gpa_roary' else None
-    out_gene_data = outdir / "gene_data.csv" if options.output_type == 'gene_data' else None
-    out_pan_ref   = outdir / "pan_genome_reference.fa" if options.output_type == 'pan_ref' else None
-    out_dna_cds   = outdir / "combined_DNA_CDS.fasta" if options.output_type == 'dna_cds' else None
-    out_prot_cds  = outdir / "combined_protein_CDS.fasta" if options.output_type == 'prot_cds' else None
-    out_gml       = outdir / "final_graph.gml" if options.output_type == 'gml' else None
+    out_gpa       = output if options.output_type == 'gpa' else None
+    out_gpa_roary = output if options.output_type == 'gpa_roary' else None
+    out_gene_data = output if options.output_type == 'gene_data' else None
+    out_pan_ref   = output if options.output_type == 'pan_ref' else None
+    out_dna_cds   = output if options.output_type == 'dna_cds' else None
+    out_prot_cds  = output if options.output_type == 'prot_cds' else None
+    out_gml       = output if options.output_type == 'gml' else None
 
-    outdir.mkdir(parents=True, exist_ok=True)
+    output.parent.mkdir(parents=True, exist_ok=True)
 
     # ── 1. Load bakta annotations ─────────────────────────────────────────────────
     annotations = load_bakta_annotations(bakta_tsv)
