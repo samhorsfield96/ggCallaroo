@@ -3,5 +3,5 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
-  - panaroo>=1.5.2
+  - panaroo>=1.7.0
   - python>=3.10
