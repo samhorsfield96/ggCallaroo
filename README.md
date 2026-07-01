@@ -1,4 +1,6 @@
-# ggCallaroo: a snakemake worflow of ggCaller, Panaroo and Bakta <img src='images/ggcallaroo.png' align="right" height="100" />
+# ggCallaroo: a snakemake worflow of ggCaller, Panaroo and Bakta 
+
+<img src='images/ggcallaroo.png' align="right" height="100" />
 
 A Snakemake pipeline combining graph-based gene prediction with
 [ggCaller](https://github.com/bacpop/ggCaller), pangenome gene clustering
